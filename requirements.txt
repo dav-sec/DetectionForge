@@ -1,0 +1,6 @@
+pysigma
+sigma-cli
+pyyaml
+yamllint
+pre-commit
+pytest

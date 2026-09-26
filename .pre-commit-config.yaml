@@ -1,0 +1,13 @@
+repos:
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        args: ["-d", "{extends: default, rules: {line-length: disable}}"]
+  - repo: local
+    hooks:
+      - id: sigma-required-fields
+        name: Verifica campos obligatorios de taxonomía DetectionForge
+        entry: python3 scripts/check_taxonomy.py
+        language: system
+        files: ^rules/.*\.yml$

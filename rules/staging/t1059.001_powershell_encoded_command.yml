@@ -1,0 +1,42 @@
+title: PowerShell con comando codificado en Base64
+id: a1b2c3d4-e5f6-4a5b-8c9d-1234567890ab
+status: experimental
+description: >
+  Detecta la ejecución de powershell.exe con el parámetro -EncodedCommand
+  (o su forma abreviada -enc/-e), una técnica común para ofuscar comandos
+  y evadir revisión visual o filtros de contenido basados en texto plano.
+author: DetectionForge Team
+date: 2026-09-25
+references:
+  # No se enlaza attack.mitre.org aquí (regla de SigmaHQ) — la técnica se
+  # declara solo vía 'tags' (ver abajo). Aquí van fuentes públicas de la
+  # detección en sí, ej. el atomic test que la valida.
+  - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1059.001/T1059.001.md
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\powershell.exe'
+    CommandLine|contains:
+      - '-enc '
+      - '-EncodedCommand'
+      - '-e '
+  condition: selection
+falsepositives:
+  - Scripts de administración legítimos que usan codificación Base64 por convención interna
+  - Herramientas de gestión de configuración (DSC, SCCM) que invocan PowerShell codificado
+level: medium
+tags:
+  - attack.execution
+  - attack.t1059.001
+
+# --- Extensiones propias de DetectionForge (no son parte del estándar Sigma) ---
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1059.001-1"   # Atomic Red Team: Encoded Command via PowerShell
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending      # pending | pass | fail — se actualiza al ejecutar el atomic test
