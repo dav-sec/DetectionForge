@@ -18,6 +18,12 @@ pre-commit install
 
 # Validar una regla manualmente:
 python3 scripts/check_taxonomy.py rules/staging/t1059.001_powershell_encoded_command.yml
+
+#Validar y convertir la primera regla
+sigma check rules/staging/t1059.001_powershell_encoded_command.yml
+sigma convert -t splunk -p sysmon rules/staging/t1059.001_powershell_encoded_command.yml
+sigma convert -t elasticsearch -p ecs_windows rules/staging/t1059.001_powershell_encoded_command.yml
+
 ```
 
 ## Estructura
