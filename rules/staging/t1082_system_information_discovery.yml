@@ -1,0 +1,34 @@
+title: Detección de información del sistema mediante systeminfo o Get-ComputerInfo
+id: 4e6a8c0e-3759-4a81-8e4a-8c0e2a4c6e8a
+status: experimental
+description: >
+  Detecta la ejecución de systeminfo.exe o el comando Get-ComputerInfo de PowerShell, lo cual es indicativo de técnicas de descubrimiento (T1082).
+author: DetectionForge Team
+date: 2026-10-06
+references:
+    - https://attack.mitre.org/techniques/T1082/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1082/T1082.md
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_systeminfo:
+        Image|endswith: '\systeminfo.exe'
+    selection_ps:
+        Image|endswith: '\powershell.exe'
+        CommandLine|contains: 'Get-ComputerInfo'
+    condition: selection_systeminfo or selection_ps
+falsepositives:
+    - Scripts de inventario de TI que corren systeminfo de forma rutinaria y programada
+level: low
+tags:
+    - attack.t1082
+    - attack.discovery
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1082-1"   # Atomic Red Team: System Information Discovery
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending 

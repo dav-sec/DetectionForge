@@ -1,0 +1,51 @@
+title: Detección de escaneo de puertos de red (regla base)
+id: 3f5a7c9e-4d60-4e82-8b3d-5e7a9c1d3f5b
+name: outbound_connection_windows
+status: experimental
+description: >
+  Detecta un proceso que inicia múltiples conexiones de red a diferentes puertos en un corto período de tiempo, lo cual es indicativo de técnicas de descubrimiento (T1046).
+author: DetectionForge Team
+date: 2026-10-06
+logsource:
+    category: network_connection
+    product: windows
+detection:
+    selection:
+        Initiated: 'true'
+    condition: selection
+level: informational
+---
+title: Detección de escaneo de puertos de red
+id: 2c4e6a8c-1537-4a89-8c2e-6a8c0e2a4c6e
+status: experimental
+description: >
+  Detecta un proceso que inicia múltiples conexiones de red a diferentes puertos en un corto período de tiempo, lo cual es indicativo de técnicas de descubrimiento (T1046).
+references:
+    - https://attack.mitre.org/techniques/T1046/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1046/T1046.md
+author: DetectionForge Team
+date: 2026-10-06
+tags:
+    - attack.t1046
+    - attack.discovery
+correlation:
+    type: value_count
+    rules:
+        - outbound_connection_windows
+    group-by:
+        - Image
+    timespan: 1m
+    condition:
+        gte: 21
+        field: DestinationPort
+falsepositives:
+    - Escáneres de vulnerabilidades autorizados corriendo desde el propio host de pruebas
+level: medium
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1046-1"   # Atomic Red Team: Network Port Scan
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending

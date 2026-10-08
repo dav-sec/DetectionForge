@@ -1,0 +1,39 @@
+title: Detección de eliminación de copias sombra (indicativo de ransomware)
+id: 2a4c6e8a-1537-4a89-8a2a-6e8a0c2e4a6e
+status: experimental
+description: >
+  Detecta la ejecución de vssadmin.exe, wmic.exe o bcdedit.exe con comandos que eliminan o deshabilitan copias sombra, lo cual es indicativo de técnicas de impacto (T1490) y puede preceder a otras técnicas de ataque.
+author: DetectionForge Team
+date: 2026-10-06
+references:
+    - https://attack.mitre.org/techniques/T1490/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1490/T1490.md
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_vssadmin:
+        Image|endswith: '\vssadmin.exe'
+        CommandLine|contains: 'delete shadows'
+    selection_wmic:
+        Image|endswith: '\wmic.exe'
+        CommandLine|contains: 'shadowcopy delete'
+    selection_bcdedit:
+        Image|endswith: '\bcdedit.exe'
+        CommandLine|contains: 'recoveryenabled no'
+    condition: selection_vssadmin or selection_wmic or selection_bcdedit
+falsepositives:
+    - Prácticamente nulos en un endpoint de usuario estándar; en servidores de backup, validar contra tareas de mantenimiento documentadas
+level: critical
+tags:
+    - attack.t1490
+    - attack.impact
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1490-1"   # Atomic Red Team: Shadow Copies Deleted or Disabled
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending 

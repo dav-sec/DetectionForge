@@ -1,0 +1,39 @@
+title: Servicio sospechoso creado mediante sc.exe
+id: 0c2e4a6b-9315-4a87-8a0c-2e4a6b8c0e2a
+status: experimental
+description: >
+  Detecta la creación de un servicio de Windows mediante sc.exe con un binPath sospechoso,
+  lo cual puede indicar persistencia maliciosa (T1569.002) o escalamiento de privilegios.
+date: 2026-10-06
+references:
+    - https://attack.mitre.org/techniques/T1569/002/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1569.002/T1569.002.md
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith: '\sc.exe'
+        CommandLine|contains: 'create'
+        CommandLine|contains: 'binPath'
+    filter:
+        CommandLine|contains:
+            - 'WinDefend'
+            - 'MsMpSvc'
+    condition: selection and not filter
+falsepositives:
+    - Instaladores legítimos de software que registran servicios de Windows
+    - Herramientas de administración remota autorizadas (PsExec usado por el propio equipo de TI)
+level: medium
+tags:
+    - attack.t1569.002
+    - attack.execution
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1569.002-1"   # Atomic Red Team: Service Creation with Suspicious Binary Path
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending 

@@ -1,0 +1,41 @@
+title: Detección de mapeo de recurso compartido administrativo mediante net.exe
+id: 4ad96c67-4431-4f05-b96b-a5596500267c
+status: experimental
+description: >
+  Detecta el mapeo de un recurso compartido administrativo (C$ o ADMIN$) mediante el comando net use,
+  lo cual puede indicar un movimiento lateral o acceso no autorizado a recursos administrativos (T1021.002).
+author: DetectionForge Team
+date: 2026-10-07
+references:
+    - https://attack.mitre.org/techniques/T1021/002/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1021.002/T1021.002.md
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_img:
+        Image|endswith:
+            - '\net.exe'
+            - '\net1.exe'
+    selection_use:
+        CommandLine|contains: ' use '
+    selection_share:
+        CommandLine|contains:
+            - '\C$'
+            - '\ADMIN$'
+    condition: all of selection_*
+falsepositives:
+    - Administradores de TI mapeando recursos administrativos para mantenimiento legítimo
+level: medium
+tags:
+    - attack.t1021.002
+    - attack.lateral-movement
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1021.002-1"   # Atomic Red Team: Administrative Share Access
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending 

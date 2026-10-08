@@ -1,0 +1,37 @@
+title: Detección de creación de cuenta local
+id: 0a2c4e6a-9315-4a87-8a0c-4e6a8c0e2a4c
+status: experimental
+description: >
+  Detecta la creación de una nueva cuenta de usuario local mediante net.exe, lo cual es indicativo de técnicas de persistencia (T1136.001).
+author: DetectionForge Team
+date: 2026-10-06
+references:
+    - https://attack.mitre.org/techniques/T1136/001/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1136.001/T1136.001.md
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith:
+            - '\net.exe'
+            - '\net1.exe'
+        CommandLine|contains|all:
+            - ' user '
+            - '/add'
+    condition: selection
+falsepositives:
+    - Aprovisionamiento legítimo de cuentas por parte de TI (idealmente vía herramientas centralizadas, no net.exe manual)
+level: medium
+tags:
+    - attack.t1136.001
+    - attack.persistence
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1136.001-1"   # Atomic Red Team: New Local User Account Created
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending 

@@ -1,0 +1,44 @@
+title: Acceso sospechoso a procesos (indicativo de inyección de código)
+id: 6c8e0a2d-5f71-4a83-9c5e-8f0a2c4e6a8c
+status: experimental
+description: >
+  Detecta procesos que acceden a otros procesos con permisos de acceso completos (0x1F0FFF, 0x1F3FFF, 0x1FFFFF),
+  lo cual es indicativo de técnicas de inyección de código (T1055) y escalamiento de privilegios.
+author: DetectionForge Team
+date: 2026-10-06
+references:
+    - https://attack.mitre.org/techniques/T1055/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1055/T1055.md
+
+logsource:
+    category: process_access
+    product: windows
+detection:
+    selection:
+        TargetImage|endswith:
+            - '\explorer.exe'
+            - '\svchost.exe'
+        GrantedAccess:
+            - '0x1F0FFF'
+            - '0x1F3FFF'
+            - '0x1FFFFF'
+    filter:
+        SourceImage|endswith:
+            - '\procexp64.exe'
+            - '\procexp.exe'
+    condition: selection and not filter
+falsepositives:
+    - Herramientas legítimas de diagnóstico (Process Explorer, depuradores) que piden acceso completo por diseño
+level: high
+tags:
+    - attack.t1055
+    - attack.stealth
+    - attack.privilege-escalation
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1055-1"   # Atomic Red Team: Process Injection via Suspicious Access
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending 

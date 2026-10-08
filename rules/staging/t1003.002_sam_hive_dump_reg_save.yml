@@ -1,0 +1,40 @@
+title: Detección de volcado de claves del Registro de Windows mediante reg.exe
+id: f024cd2b-52ec-40a3-be9c-abe44b1a9b04
+status: experimental
+description: >
+  Detecta el uso de la utilidad reg.exe para guardar un volcado de las claves del Registro de Windows (SAM, SECURITY, SYSTEM),
+  lo cual puede indicar un intento de exfiltración de credenciales (T1003.002).
+author: DetectionForge Team
+date: 2026-10-07
+references:
+    - https://attack.mitre.org/techniques/T1003/002/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1003.002/T1003.002.md
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_img:
+        Image|endswith: '\reg.exe'
+    selection_save:
+        CommandLine|contains: ' save '
+    selection_hive:
+        CommandLine|contains:
+            - 'hklm\sam'
+            - 'hklm\security'
+            - 'hklm\system'
+    condition: all of selection_*
+falsepositives:
+    - Copias de seguridad administrativas del Registro (poco comunes sobre estas tres claves)
+level: high
+tags:
+    - attack.t1003.002
+    - attack.credential-access
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1003.002-1"   # Atomic Red Team: Registry Hive Dump via reg.exe save
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending 

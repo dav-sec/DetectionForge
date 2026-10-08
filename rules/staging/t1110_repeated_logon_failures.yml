@@ -1,0 +1,49 @@
+title: Detección de intentos fallidos de inicio de sesión repetidos
+id: 1d3f5a7c-2b4e-4c60-9a1b-3c5e7a9b1d3f
+name: failed_logon_windows
+status: experimental
+description: Detecta intentos fallidos de inicio de sesión (EventID 4625) en un host Windows, lo cual puede indicar un ataque de fuerza bruta o credenciales comprometidas (T1110).
+author: DetectionForge Team
+date: 2026-10-06
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4625
+    condition: selection
+level: low
+---
+title: Múltiples intentos fallidos de inicio de sesión para una misma cuenta
+id: 4a6c8e0f-3759-4a81-8e4a-6c8e0f2a4c6e
+status: experimental
+description: >
+  Detecta múltiples intentos fallidos de inicio de sesión (EventID 4625) para una misma cuenta de usuario en un corto período de tiempo,
+  lo cual puede indicar un ataque de fuerza bruta o credenciales comprometidas (T1110).
+references:
+    - https://attack.mitre.org/techniques/T1110/
+author: DetectionForge Team
+date: 2026-10-06
+tags:
+    - attack.t1110
+    - attack.credential-access
+correlation:
+    type: event_count
+    rules:
+        - failed_logon_windows
+    group-by:
+        - TargetUserName
+    timespan: 5m
+    condition:
+        gte: 11
+falsepositives:
+    - Servicios o procesos automatizados con una credencial desactualizada reintentando de forma legítima
+level: medium
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1110-1"   # Atomic Red Team: Repeated Logon Failures
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending 

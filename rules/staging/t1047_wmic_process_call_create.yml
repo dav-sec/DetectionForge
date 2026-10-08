@@ -1,0 +1,36 @@
+title: Detección de ejecución de procesos mediante WMIC process call create
+id: 873c483d-3bab-4a45-8238-1917c6f871fb
+status: experimental
+description: >
+  Detecta la ejecución de procesos mediante el comando `wmic process call create`, lo cual puede indicar la ejecución remota de código (T1047).
+author: DetectionForge Team
+date: 2026-10-07
+references:
+    - https://attack.mitre.org/techniques/T1047/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1047/T1047.md
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith: '\wmic.exe'
+        CommandLine|contains|all:
+            - 'process'
+            - 'call'
+            - 'create'
+    condition: selection
+falsepositives:
+    - Scripts de administración heredados que usan WMIC para lanzar procesos
+level: medium
+tags:
+    - attack.t1047
+    - attack.execution
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1047-1"   # Atomic Red Team: Process Execution via WMIC process call create
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending 

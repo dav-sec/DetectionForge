@@ -1,0 +1,35 @@
+title: Detección de descubrimiento de sistemas remotos mediante net view
+id: 6a8c0e2a-5971-4a83-8a6c-0e2a4c6e8a0c
+status: experimental
+description: >
+  Detecta la ejecución de net.exe o net1.exe con el comando view, lo cual es indicativo de técnicas de descubrimiento de sistemas remotos (T1018).
+author: DetectionForge Team
+date: 2026-10-06
+references:
+    - https://attack.mitre.org/techniques/T1018/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1018/T1018.md
+
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith:
+            - '\net.exe'
+            - '\net1.exe'
+        CommandLine|contains: ' view'
+    condition: selection
+falsepositives:
+    - Uso administrativo rutinario de net view en entornos pequeños sin herramientas de inventario dedicadas
+level: low
+tags:
+    - attack.t1018
+    - attack.discovery
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1018-1"   # Atomic Red Team: Remote System Discovery via net view
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending 

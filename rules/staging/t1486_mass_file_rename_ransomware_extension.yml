@@ -1,0 +1,36 @@
+title: Detección de renombrado masivo de archivos con extensiones de ransomware
+id: 6c8e0a2b-5971-4a83-8a6c-8e0a2b4c6e8a
+status: experimental
+description: >
+  Detecta la renombración masiva de archivos con extensiones asociadas a ransomware, como .locked, .encrypted, .crypt o .ryuk.
+author: DetectionForge Team
+date: 2026-10-06
+references:
+    - https://attack.mitre.org/techniques/T1486/
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1486/T1486.md
+
+logsource:
+    category: file_rename
+    product: windows
+detection:
+    selection:
+        TargetFilename|contains:
+            - '.locked'
+            - '.encrypted'
+            - '.crypt'
+            - '.ryuk'
+    condition: selection
+falsepositives:
+    - Prácticamente nulos; cualquier coincidencia amerita respuesta inmediata, no solo investigación
+level: critical
+tags:
+    - attack.t1486
+    - attack.impact
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1486-1"   # Atomic Red Team: Mass File Rename to Ransomware Extension
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending 
