@@ -129,16 +129,6 @@ unzip chainsaw.zip -d chainsaw
 ./chainsaw/chainsaw/chainsaw.exe lint --kind sigma rules/staging/
 ```
 
-Verifica que Chainsaw pueda cargar correctamente las reglas.
-
-Esta es la prueba que anteriormente generaba errores como:
-
-```text
-failed to parse
-```
-
-Si `lint` reporta un problema, la causa se encuentra en una regla específica y no en el flujo completo de validación.
-
 ---
 
 ## Paso 5: Pre-validación con muestras EVTX
