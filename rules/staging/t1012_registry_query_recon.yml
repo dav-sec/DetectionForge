@@ -3,6 +3,7 @@ id: 8c0e2a4c-7193-4a85-8c0e-2a4c6e8a0c2e
 status: experimental
 description: >
   Detecta la ejecución de reg.exe con el comando query, lo cual es indicativo de técnicas de reconocimiento (T1012) y puede preceder a otras técnicas de ataque.
+author: DetectionForge Team
 date: 2026-10-06
 references:
     - https://attack.mitre.org/techniques/T1012/
