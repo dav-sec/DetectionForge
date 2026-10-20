@@ -4,6 +4,7 @@ status: experimental
 description: >
   Detecta la creación de un servicio de Windows mediante sc.exe con un binPath sospechoso,
   lo cual puede indicar persistencia maliciosa (T1569.002) o escalamiento de privilegios.
+author: DetectionForge Team
 date: 2026-10-06
 references:
     - https://attack.mitre.org/techniques/T1569/002/
