@@ -6,3 +6,5 @@ pyyaml
 yamllint
 pre-commit
 pytest
+pysigma-pipeline-sysmon
+pysigma-pipeline-windows
