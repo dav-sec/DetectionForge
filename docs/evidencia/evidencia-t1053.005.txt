@@ -1,0 +1,25 @@
+
+======================================================================
+Regla:          t1053.005_scheduled_task_creation.yml
+atomic_test_id: T1053.005-1
+======================================================================
+
+SPL generado:
+  source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="*\\schtasks.exe" CommandLine="*/create*" NOT CommandLine="*Microsoft\\Windows\\UpdateOrchestrator*"
+
+Lucene generado:
+  (process.executable.caseless:*\\schtasks.exe AND process.command_line:*\/create*) AND (NOT process.command_line:*Microsoft\\Windows\\UpdateOrchestrator*)
+
+Consultando Splunk (últimos 1440 min)...
+  -> PASS (2 evento(s))
+
+Consultando Elastic (últimos 1440 min)...
+  -> PASS (2 documento(s))
+
+======================================================================
+RESUMEN
+======================================================================
+  Splunk:  PASS
+  Elastic: PASS
+
+✅ Regla validada en ambos SIEM — lista para evidencia de promoción a producción.

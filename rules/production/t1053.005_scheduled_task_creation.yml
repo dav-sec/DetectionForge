@@ -1,6 +1,6 @@
 title: Tarea programada creada mediante schtasks.exe
 id: 7e4f1a2c-9b3d-4a5e-8f1c-2a4b6c8d0e1f
-status: experimental
+status: stable
 description: >
   Detecta la creación de nuevas tareas programadas mediante el comando schtasks.exe,
   una técnica común utilizada por malware para persistir en el sistema y ejecutar
@@ -37,4 +37,4 @@ detectionforge:
   siem_targets:
     - splunk
     - elastic
-  validation_status: pending 
+  validation_status: passed
