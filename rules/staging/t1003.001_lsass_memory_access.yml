@@ -1,0 +1,40 @@
+title: LSASS Memory Access via Uncommon Process
+id: 9c2d4e6f-1a3b-4c5d-8e7f-2b4d6e8f0a1c
+status: experimental
+description: >
+  Detecta el acceso a la memoria de LSASS (Local Security Authority Subsystem Service)
+  por procesos que no son típicamente asociados con la administración de credenciales,
+  lo que puede indicar intentos de robo de credenciales o dumping de memoria.
+author: DetectionForge Team
+date: 2026-10-06
+references:
+    - https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1003.001/T1003.001.md
+logsource:
+    category: process_access
+    product: windows
+detection:
+    selection:
+        TargetImage|endswith: '\lsass.exe'
+        GrantedAccess:
+            - '0x1010'
+            - '0x1410'
+            - '0x1438'
+    filter:
+        SourceImage|endswith:
+            - '\wmiprvse.exe'
+            - '\svchost.exe'
+    condition: selection and not filter
+falsepositives:
+    - Soluciones EDR/antivirus legítimas que inspeccionan LSASS por diseño
+level: high
+tags:
+    - attack.t1003.001
+    - attack.credential-access
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1003.001-1"   # Atomic Red Team: LSASS Memory Access
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending

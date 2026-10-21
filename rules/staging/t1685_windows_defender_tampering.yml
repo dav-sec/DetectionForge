@@ -1,0 +1,44 @@
+title: Desactivación de la protección en tiempo real de Windows Defender
+id: 2b5d7f9a-1c3e-4f60-8a2b-5c7e9f1a3b5d
+status: experimental
+description: >
+  Detecta la desactivación de la protección en tiempo real de Windows Defender mediante
+  PowerShell o reg.exe, una técnica común utilizada por malware para evadir la detección
+  y ejecutar código malicioso sin ser bloqueado por el antivirus.
+author: DetectionForge Team
+date: 2026-10-06
+references:
+    - https://learn.microsoft.com/en-us/defender-endpoint/troubleshoot-microsoft-defender-antivirus
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_ps:
+        Image|endswith: '\powershell.exe'
+        CommandLine|contains:
+            - 'Set-MpPreference'
+            - 'DisableRealtimeMonitoring'
+            - 'DisableAntiSpyware'
+    selection_reg:
+        Image|endswith: '\reg.exe'
+        CommandLine|contains:
+            - 'Windows Defender'
+            - 'DisableAntiSpyware'
+    condition: selection_ps or selection_reg
+falsepositives:
+    - Despliegue legítimo de un EDR de reemplazo que requiere deshabilitar Defender primero
+    - Scripts de hardening gestionados centralmente (deben excluirse por hash/firma, no por esta regla)
+level: high
+
+tags:
+    - attack.t1685
+    - attack.defense-impairment
+
+detectionforge:
+  owner: "dav-sec, Manzur68"
+  atomic_test_id: "T1685-1"   # Atomic Red Team: Windows Defender Tampering
+  version: "0.1.0"
+  siem_targets:
+    - splunk
+    - elastic
+  validation_status: pending
