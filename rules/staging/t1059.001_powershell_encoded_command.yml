@@ -33,7 +33,7 @@ tags:
 
 detectionforge:
   owner: "dav-sec, Manzur68"
-  atomic_test_id: "T1059.001-1"   # Atomic Red Team: Encoded Command via PowerShell
+  atomic_test_id: "T1059.001-15"   # Atomic Red Team: Encoded Command via PowerShell
   version: "0.1.0"
   siem_targets:
     - splunk
