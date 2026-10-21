@@ -38,4 +38,4 @@ detectionforge:
   siem_targets:
     - splunk
     - elastic
-  validation_status: pending      # pending | pass | fail — se actualiza al ejecutar el atomic test
+  validation_status: passed      # pending | pass | fail — se actualiza al ejecutar el atomic test

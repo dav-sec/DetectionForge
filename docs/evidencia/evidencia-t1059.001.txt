@@ -1,0 +1,25 @@
+
+======================================================================
+Regla:          t1059.001_powershell_encoded_command.yml
+atomic_test_id: T1059.001-15
+======================================================================
+
+SPL generado:
+  source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="*\\powershell.exe" CommandLine IN ("*-enc *", "*-EncodedCommand*", "*-e *")
+
+Lucene generado:
+  process.executable.caseless:*\\powershell.exe AND (process.command_line:(*\-enc\ * OR *\-EncodedCommand* OR *\-e\ *))
+
+Consultando Splunk (últimos 1440 min)...
+  -> PASS (8 evento(s))
+
+Consultando Elastic (últimos 1440 min)...
+  -> PASS (7 documento(s))
+
+======================================================================
+RESUMEN
+======================================================================
+  Splunk:  PASS
+  Elastic: PASS
+
+✅ Regla validada en ambos SIEM — lista para evidencia de promoción a producción.

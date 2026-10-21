@@ -5,3 +5,4 @@ venv/
 .env
 *.log
 docker-data/
+runner/config.py
