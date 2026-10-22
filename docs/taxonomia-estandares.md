@@ -176,6 +176,15 @@ Si el runner confirma `PASS` en ambos SIEM, mover la regla a
 `detectionforge.validation_status: passed`, y abrir un PR con la salida del
 runner como evidencia (guardarla en `docs/evidencia/`).
 
+## Pipeline CI/CD de DetectionForge
+### 1. Qué se construyó
+Un pipeline en GitHub Actions que valida, convierte y verifica las reglas Sigma en cada cambio y publica una release versionada en la VM SIEM.
+
+Job,Dónde corre,Qué hace
+lint,GitHub (ubuntu-latest),"sigma check, validate_sigma.py y check_taxonomy.py"
+convert,GitHub (ubuntu-latest),Conversión con pySigma a SPL (19 archivos) y Lucene (18 archivos); las correlaciones solo van a Splunk
+deploy,Runner self-hosted en la Kali,"Por SSH sube la release a la SIEM, valida las consultas contra Elastic y Splunk, y activa el enlace current"
+
 ## Equipo
 
 - dav-sec
