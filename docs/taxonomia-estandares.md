@@ -180,10 +180,41 @@ runner como evidencia (guardarla en `docs/evidencia/`).
 ### 1. Qué se construyó
 Un pipeline en GitHub Actions que valida, convierte y verifica las reglas Sigma en cada cambio y publica una release versionada en la VM SIEM.
 
-Job,Dónde corre,Qué hace
-lint,GitHub (ubuntu-latest),"sigma check, validate_sigma.py y check_taxonomy.py"
-convert,GitHub (ubuntu-latest),Conversión con pySigma a SPL (19 archivos) y Lucene (18 archivos); las correlaciones solo van a Splunk
-deploy,Runner self-hosted en la Kali,"Por SSH sube la release a la SIEM, valida las consultas contra Elastic y Splunk, y activa el enlace current"
+| Job | Dónde corre | Qué hace |
+| :--- | :--- | :--- |
+| **lint** | GitHub (`ubuntu-latest`) | `sigma check`, `validate_sigma.py` y `check_taxonomy.py` |
+| **convert** | GitHub (`ubuntu-latest`) | Conversión con pySigma a SPL (19 archivos) y Lucene (18 archivos); las correlaciones solo van a Splunk |
+| **deploy** | Runner self-hosted en la Kali | Por SSH sube la release a la SIEM, valida las consultas contra Elastic y Splunk, y activa el enlace `current` |
+
+deploy solo se ejecuta en push a main y espera la aprobación del entorno lab-siem
+
+### 2. Archivos entregados
+
+- .github/workflows/detection_pipeline.yml: el pipeline completo.
+- scripts/validate_sigma.py: comprueba YAML, campos obligatorios, UUID único, tags ATT&CK de táctica y técnica, la regla de references y los requisitos de production.
+- scripts/ci/verify_siem.py: corre en la SIEM y valida la sintaxis de cada consulta con _validate/query (Elastic) y search/parser (Splunk), sin ejecutarla.
+
+### 3. Decisiones de diseño
+
+- Runner self-hosted: 192.168.33.10 es una IP privada que los runners de GitHub no alcanzan. Como WSL no pudo ver la red de las VMs, el runner quedó en la Kali.
+- SSH con clave (ed25519) y host key fijada, en lugar de contraseña.
+- Credenciales como secretos de GitHub, enviadas a la SIEM por stdin a un archivo temporal, no como argumentos de línea de comandos.
+- Releases versionadas por hash de commit, con rotación de las últimas 10 y rollback cambiando un enlace simbólico.
+
+### 4. Problemas encontrados y cómo se resolvieron
+
+- Tácticas con guion y de ATT&CK v18 (credential-access, stealth, defense-impairment): mi script solo aceptaba guion bajo y no conocía las tácticas nuevas. Se corrigió.
+- Reglas de correlación (T1046, T1110): son archivos multi-documento. Se hizo que validate_sigma.py trate la regla base como auxiliar y se parcheó check_taxonomy.py para leer varios documentos y no exigir logsource ni detection a las correlaciones.
+- Regla t1012 con level no permitido y enlace a attack.mitre.org en T1110: eran incumplimientos reales de tu taxonomía, y se corrigieron en las reglas.
+- Archivo de ejemplo inexistente (t1059.001_...): era el ejemplo del README; se usaron reglas reales de tu carpeta.
+- Job deploy en cola: el runner no tenía la etiqueta detectionforge-lab; se añadió.
+- Host key verification failed: el secreto SIEM_KNOWN_HOSTS estaba mal; se regeneró con ssh-keyscan.
+- error in libcrypto: la clave privada se corrompió al copiarla; se pasó a base64 (SIEM_SSH_KEY_B64).
+
+### 5. Limitaciones que conviene declarar
+
+- El pipeline valida sintaxis y que los SIEM aceptan las consultas, pero no prueba que detecten el ataque. Eso lo hace la validación empírica del Entregable 3 (atomic test y runner.py).
+- El despliegue publica una release, no activa alertas en Splunk ni en Elastic. Publicarlas como saved searches (API REST de Splunk) o detection rules (API de Kibana) es la mejora natural.
 
 ## Equipo
 
