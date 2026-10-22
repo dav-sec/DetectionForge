@@ -18,7 +18,7 @@ detection:
     condition: selection
 falsepositives:
     - Es una de las reglas más ruidosas del set; reg query es común en scripts legítimos. Considerar subirla a stable solo combinada con otra señal (ver Mes 5, gestión de falsos positivos)
-level: informational
+level: low
 tags:
     - attack.t1012
     - attack.discovery
