@@ -6,3 +6,6 @@ venv/
 *.log
 docker-data/
 runner/config.py
+build/
+runner/config.py
+.venv/

@@ -1,0 +1,183 @@
+name: Detection Pipeline
+
+on:
+  push:
+    branches: [main]
+    paths: ["rules/**", "scripts/**", "pipelines/**", "requirements.txt", ".github/workflows/**"]
+  pull_request:
+    paths: ["rules/**", "scripts/**", "pipelines/**", "requirements.txt", ".github/workflows/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: detection-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1) LINTING Y VALIDACIÓN ESTÁTICA  (runner de GitHub, no requiere laboratorio)
+  # ---------------------------------------------------------------------------
+  lint:
+    name: Lint y validación estática
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt pyyaml
+          sigma plugin install splunk elasticsearch sysmon windows
+
+      - name: sigma check (estándar Sigma)
+        run: sigma check rules/staging/ rules/production/
+
+      - name: validate_sigma.py (YAML + tags ATT&CK + taxonomía)
+        run: python3 scripts/validate_sigma.py rules/staging rules/production
+
+      - name: check_taxonomy.py (taxonomía detallada del proyecto)
+        run: |
+          for f in $(find rules -name '*.yml'); do
+            python3 scripts/check_taxonomy.py "$f" || exit 1
+          done
+
+  # ---------------------------------------------------------------------------
+  # 2) CONVERSIÓN Sigma -> SPL / Lucene con pySigma
+  # ---------------------------------------------------------------------------
+  convert:
+    name: Conversión pySigma
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt pyyaml
+          sigma plugin install splunk elasticsearch sysmon windows
+
+      - name: Convertir reglas
+        run: |
+          mkdir -p build/converted/splunk build/converted/lucene
+          fail=0
+          for f in rules/staging/*.yml rules/production/*.yml; do
+            [ -e "$f" ] || continue
+            name=$(basename "$f" .yml)
+            # Las correlaciones (T1046, T1110) se tratan aparte: Lucene no las soporta
+            if grep -q '^correlation:' "$f"; then
+              echo "↷ $name: correlación, se omite conversión individual"
+              continue
+            fi
+            sigma convert -t splunk -p sysmon -p splunk_windows "$f" \
+              > "build/converted/splunk/$name.spl" \
+              || { echo "::error file=$f::Falla la conversión a Splunk"; fail=1; }
+            sigma convert -t lucene -p ecs_windows "$f" \
+              > "build/converted/lucene/$name.txt" \
+              || { echo "::error file=$f::Falla la conversión a Lucene"; fail=1; }
+          done
+          # Correlaciones: se convierte el directorio completo para resolver referencias (solo Splunk)
+          sigma convert -t splunk -p sysmon -p splunk_windows --skip-unsupported \
+            rules/staging/ > build/converted/splunk/_correlations_and_all.spl || true
+          exit $fail
+
+      - name: Resumen
+        run: |
+          echo "### Conversión pySigma" >> "$GITHUB_STEP_SUMMARY"
+          echo "- SPL: $(ls build/converted/splunk | wc -l) archivos" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Lucene: $(ls build/converted/lucene | wc -l) archivos" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: converted-queries
+          path: build/converted/
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # 3) DESPLIEGUE / VERIFICACIÓN POR SSH EN LA VM SIEM (192.168.33.10)
+  #    Solo en push a main. Runner SELF-HOSTED dentro de la red del laboratorio,
+  #    porque 192.168.33.10 es una IP privada inalcanzable desde GitHub.
+  # ---------------------------------------------------------------------------
+  deploy:
+    name: Despliegue y verificación en SIEM
+    needs: convert
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, linux, detectionforge-lab]
+    environment: lab-siem            # permite aprobación manual y secretos por entorno
+    env:
+      SIEM_HOST: ${{ secrets.SIEM_HOST }}
+      SIEM_USER: ${{ secrets.SIEM_USER }}
+      RELEASE_DIR: /opt/detectionforge/releases/${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: converted-queries
+          path: build/converted
+
+      - name: Preparar SSH (clave + host key fijada)
+        run: |
+          install -m 700 -d "$RUNNER_TEMP/ssh"
+          printf '%s\n' "${{ secrets.SIEM_SSH_KEY }}" > "$RUNNER_TEMP/ssh/id"
+          chmod 600 "$RUNNER_TEMP/ssh/id"
+          printf '%s\n' "${{ secrets.SIEM_KNOWN_HOSTS }}" > "$RUNNER_TEMP/ssh/known_hosts"
+          cat > "$RUNNER_TEMP/ssh/ssh.sh" <<EOF
+          #!/usr/bin/env bash
+          exec ssh -i $RUNNER_TEMP/ssh/id \\
+            -o UserKnownHostsFile=$RUNNER_TEMP/ssh/known_hosts \\
+            -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=15 "\$@"
+          EOF
+          chmod +x "$RUNNER_TEMP/ssh/ssh.sh"
+
+      - name: Preflight - conectividad SSH
+        run: |
+          "$RUNNER_TEMP/ssh/ssh.sh" "$SIEM_USER@$SIEM_HOST" \
+            'echo "Conectado a $(hostname)"; uptime; systemctl is-active elasticsearch || true'
+
+      - name: Subir release al SIEM
+        run: |
+          S="$RUNNER_TEMP/ssh/ssh.sh"
+          cp scripts/ci/verify_siem.py build/
+          mkdir -p rules/production
+          tar czf - -C build converted verify_siem.py -C .. rules/production \
+            | "$S" "$SIEM_USER@$SIEM_HOST" "mkdir -p $RELEASE_DIR && tar xzf - -C $RELEASE_DIR"
+
+      - name: Verificar consultas contra Elastic y Splunk
+        run: |
+          S="$RUNNER_TEMP/ssh/ssh.sh"
+          # Las credenciales viajan por stdin hacia un archivo 600 temporal (no por argv)
+          "$S" "$SIEM_USER@$SIEM_HOST" "umask 077; cat > $RELEASE_DIR/.env" <<EOF
+          export ES_USER='elastic'
+          export ES_PASS='${{ secrets.ELASTIC_PASSWORD }}'
+          export SPLUNK_USER='${{ secrets.SPLUNK_USER }}'
+          export SPLUNK_PASS='${{ secrets.SPLUNK_PASSWORD }}'
+          EOF
+          "$S" "$SIEM_USER@$SIEM_HOST" \
+            "set -a; . $RELEASE_DIR/.env; set +a; \
+             python3 $RELEASE_DIR/verify_siem.py $RELEASE_DIR/converted; rc=\$?; \
+             rm -f $RELEASE_DIR/.env; exit \$rc"
+
+      - name: Activar release (symlink "current") y rotar históricos
+        run: |
+          "$RUNNER_TEMP/ssh/ssh.sh" "$SIEM_USER@$SIEM_HOST" \
+            "ln -sfn $RELEASE_DIR /opt/detectionforge/current && \
+             ls -1dt /opt/detectionforge/releases/* | tail -n +11 | xargs -r rm -rf && \
+             echo 'Release activa:' \$(readlink /opt/detectionforge/current)"
+
+      - name: Limpieza de credenciales locales
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/ssh"
