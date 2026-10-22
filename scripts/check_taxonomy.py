@@ -23,14 +23,21 @@ def check_file(path: str) -> list[str]:
     errors = []
     with open(path, "r", encoding="utf-8") as f:
         try:
-            rule = yaml.safe_load(f)
+            docs = [d for d in yaml.safe_load_all(f) if d is not None]
         except yaml.YAMLError as e:
             return [f"{path}: YAML inválido — {e}"]
+    if not docs:
+        return [f"{path}: archivo vacío"]
+    # En archivos multi-documento, la regla "principal" es la de correlación
+    rule = next((d for d in docs if isinstance(d, dict) and "correlation" in d), docs[0])
 
     if not isinstance(rule, dict):
         return [f"{path}: la regla no es un mapeo YAML válido"]
 
-    for field in REQUIRED_TOP_LEVEL:
+    is_correlation = "correlation" in rule
+    required = [f for f in REQUIRED_TOP_LEVEL
+                if not (is_correlation and f in ("logsource", "detection"))]
+    for field in required:
         if field not in rule or rule[field] in (None, "", []):
             errors.append(f"{path}: falta el campo obligatorio '{field}'")
 

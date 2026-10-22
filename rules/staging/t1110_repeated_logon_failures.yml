@@ -21,7 +21,7 @@ description: >
   Detecta múltiples intentos fallidos de inicio de sesión (EventID 4625) para una misma cuenta de usuario en un corto período de tiempo,
   lo cual puede indicar un ataque de fuerza bruta o credenciales comprometidas (T1110).
 references:
-    - https://attack.mitre.org/techniques/T1110/
+    - https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4625
 author: DetectionForge Team
 date: 2026-10-06
 tags:
