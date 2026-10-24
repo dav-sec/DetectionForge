@@ -1,0 +1,156 @@
+{
+  "name": "DetectionForge - Cobertura de reglas",
+  "versions": {
+    "attack": "16",
+    "navigator": "4.9.1",
+    "layer": "4.5"
+  },
+  "domain": "enterprise-attack",
+  "description": "Cobertura de técnicas ATT&CK cubiertas por las reglas Sigma del proyecto DetectionForge (SOC-06). Verde: validada empíricamente con atomic test + runner (Splunk y Elastic). Amarillo: regla escrita, pendiente de validación empírica. Rojo: en production/ sin validation_status=passed (inconsistencia a corregir).",
+  "techniques": [
+    {
+      "techniqueID": "T1003.001",
+      "color": "#ffe766",
+      "comment": "Reglas: t1003.001_lsass_memory_access.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1003.002",
+      "color": "#ffe766",
+      "comment": "Reglas: t1003.002_sam_hive_dump_reg_save.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1012",
+      "color": "#ffe766",
+      "comment": "Reglas: t1012_registry_query_recon.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1018",
+      "color": "#ffe766",
+      "comment": "Reglas: t1018_remote_system_discovery_net_view.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1021.002",
+      "color": "#ffe766",
+      "comment": "Reglas: t1021.002_admin_share_net_use.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1047",
+      "color": "#ffe766",
+      "comment": "Reglas: t1047_wmic_process_call_create.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1053.005",
+      "color": "#8ec843",
+      "comment": "Reglas: t1053.005_scheduled_task_creation.yml | Validadas: 1/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1055",
+      "color": "#ffe766",
+      "comment": "Reglas: t1055_process_injection_suspicious_access.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1059.001",
+      "color": "#8ec843",
+      "comment": "Reglas: t1059.001_powershell_encoded_command.yml | Validadas: 1/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1082",
+      "color": "#ffe766",
+      "comment": "Reglas: t1082_system_information_discovery.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1098",
+      "color": "#ffe766",
+      "comment": "Reglas: t1098_account_added_to_privileged_group.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1105",
+      "color": "#ffe766",
+      "comment": "Reglas: t1105_ingress_tool_transfer_lolbas.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1136.001",
+      "color": "#ffe766",
+      "comment": "Reglas: t1136.001_local_account_created.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1486",
+      "color": "#ffe766",
+      "comment": "Reglas: t1486_mass_file_rename_ransomware_extension.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1490",
+      "color": "#ffe766",
+      "comment": "Reglas: t1490_shadow_copy_deletion.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1552.002",
+      "color": "#ffe766",
+      "comment": "Reglas: t1552.002_credentials_in_registry.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1569.002",
+      "color": "#ffe766",
+      "comment": "Reglas: t1569.002_service_creation_suspicious_binpath.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1685",
+      "color": "#ffe766",
+      "comment": "Reglas: t1685_windows_defender_tampering.yml | Validadas: 0/1",
+      "enabled": true,
+      "showSubtechniques": true
+    }
+  ],
+  "legendItems": [
+    {
+      "label": "Validada (PASS en ambos SIEM)",
+      "color": "#8ec843"
+    },
+    {
+      "label": "Pendiente de validación empírica",
+      "color": "#ffe766"
+    },
+    {
+      "label": "Inconsistencia: en production sin validar",
+      "color": "#ff6666"
+    }
+  ],
+  "showTacticRowBackground": true,
+  "tacticRowBackground": "#dddddd",
+  "selectTechniquesAcrossTactics": true,
+  "selectSubtechniquesWithParent": false
+}
