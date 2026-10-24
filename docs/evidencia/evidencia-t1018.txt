@@ -1,0 +1,25 @@
+
+======================================================================
+Regla:          t1018_remote_system_discovery_net_view.yml
+atomic_test_id: T1018-1
+======================================================================
+
+SPL generado:
+  source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image IN ("*\\net.exe", "*\\net1.exe") CommandLine="* view*"
+
+Lucene generado:
+  (process.executable.caseless:(*\\net.exe OR *\\net1.exe)) AND process.command_line:*\ view*
+
+Consultando Splunk (últimos 1440 min)...
+  -> PASS (4 evento(s))
+
+Consultando Elastic (últimos 1440 min)...
+  -> PASS (4 documento(s))
+
+======================================================================
+RESUMEN
+======================================================================
+  Splunk:  PASS
+  Elastic: PASS
+
+✅ Regla validada en ambos SIEM — lista para evidencia de promoción a producción.
