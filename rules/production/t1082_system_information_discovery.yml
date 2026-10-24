@@ -1,6 +1,6 @@
 title: Detección de información del sistema mediante systeminfo o Get-ComputerInfo
 id: 4e6a8c0e-3759-4a81-8e4a-8c0e2a4c6e8a
-status: experimental
+status: stable
 description: >
   Detecta la ejecución de systeminfo.exe o el comando Get-ComputerInfo de PowerShell, lo cual es indicativo de técnicas de descubrimiento (T1082).
 author: DetectionForge Team
@@ -30,4 +30,4 @@ detectionforge:
   siem_targets:
     - splunk
     - elastic
-  validation_status: pending 
+  validation_status: passed

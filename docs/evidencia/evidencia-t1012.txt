@@ -1,0 +1,25 @@
+
+======================================================================
+Regla:          t1012_registry_query_recon.yml
+atomic_test_id: T1012-1
+======================================================================
+
+SPL generado:
+  source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="*\\reg.exe" CommandLine="*query*"
+
+Lucene generado:
+  process.executable.caseless:*\\reg.exe AND process.command_line:*query*
+
+Consultando Splunk (últimos 15 min)...
+  -> PASS (22 evento(s))
+
+Consultando Elastic (últimos 15 min)...
+  -> PASS (22 documento(s))
+
+======================================================================
+RESUMEN
+======================================================================
+  Splunk:  PASS
+  Elastic: PASS
+
+✅ Regla validada en ambos SIEM — lista para evidencia de promoción a producción.

@@ -1,6 +1,6 @@
 title: Detección de descubrimiento de sistemas remotos mediante net view
 id: 6a8c0e2a-5971-4a83-8a6c-0e2a4c6e8a0c
-status: experimental
+status: stable
 description: >
   Detecta la ejecución de net.exe o net1.exe con el comando view, lo cual es indicativo de técnicas de descubrimiento de sistemas remotos (T1018).
 author: DetectionForge Team
@@ -31,4 +31,4 @@ detectionforge:
   siem_targets:
     - splunk
     - elastic
-  validation_status: pending 
+  validation_status: passed

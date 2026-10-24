@@ -24,15 +24,15 @@
     },
     {
       "techniqueID": "T1012",
-      "color": "#ffe766",
-      "comment": "Reglas: t1012_registry_query_recon.yml | Validadas: 0/1",
+      "color": "#8ec843",
+      "comment": "Reglas: t1012_registry_query_recon.yml | Validadas: 1/1",
       "enabled": true,
       "showSubtechniques": true
     },
     {
       "techniqueID": "T1018",
-      "color": "#ffe766",
-      "comment": "Reglas: t1018_remote_system_discovery_net_view.yml | Validadas: 0/1",
+      "color": "#8ec843",
+      "comment": "Reglas: t1018_remote_system_discovery_net_view.yml | Validadas: 1/1",
       "enabled": true,
       "showSubtechniques": true
     },
@@ -73,8 +73,8 @@
     },
     {
       "techniqueID": "T1082",
-      "color": "#ffe766",
-      "comment": "Reglas: t1082_system_information_discovery.yml | Validadas: 0/1",
+      "color": "#8ec843",
+      "comment": "Reglas: t1082_system_information_discovery.yml | Validadas: 1/1",
       "enabled": true,
       "showSubtechniques": true
     },

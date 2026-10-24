@@ -1,6 +1,6 @@
 title: Detección de consultas sospechosas al Registro (indicativo de reconocimiento)
 id: 8c0e2a4c-7193-4a85-8c0e-2a4c6e8a0c2e
-status: experimental
+status: stable
 description: >
   Detecta la ejecución de reg.exe con el comando query, lo cual es indicativo de técnicas de reconocimiento (T1012) y puede preceder a otras técnicas de ataque.
 author: DetectionForge Team
@@ -29,4 +29,4 @@ detectionforge:
   siem_targets:
     - splunk
     - elastic
-  validation_status: pending 
+  validation_status: passed
