@@ -1,6 +1,6 @@
 title: LSASS Memory Access via Uncommon Process
 id: 9c2d4e6f-1a3b-4c5d-8e7f-2b4d6e8f0a1c
-status: experimental
+status: stable
 description: >
   Detecta el acceso a la memoria de LSASS (Local Security Authority Subsystem Service)
   por procesos que no son típicamente asociados con la administración de credenciales,
@@ -37,4 +37,4 @@ detectionforge:
   siem_targets:
     - splunk
     - elastic
-  validation_status: pending
+  validation_status: passed
