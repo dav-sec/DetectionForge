@@ -40,7 +40,8 @@ sigma convert -t splunk -p sysmon -p splunk_windows rules/staging/<regla>.yml
 sigma convert -t lucene -p ecs_windows rules/staging/<regla>.yml
 ```
 
-![alt text](../image-1.png)
+<img width="1600" height="237" alt="image" src="https://github.com/user-attachments/assets/feb95ba6-32c9-484d-b541-e7b6189ac13d" />
+
 
 **3.4 Validación empírica (E3).** En la VM víctima:
 ```powershell
@@ -54,7 +55,8 @@ python3 runner.py ../rules/staging/<regla>.yml --lookback 15 | tee ../docs/evide
 cd ..
 ```
 
-![alt text](../image-2.png)
+<img width="1600" height="719" alt="image" src="https://github.com/user-attachments/assets/dda7ee0b-336d-4077-a12d-f64e891dbb15" />
+
 
 El archivo sigue el formato de las evidencias existentes (p. ej. `evidencia-t1018.txt`):
 cabecera con la regla y el `atomic_test_id`, SPL y Lucene generados, resultado de cada SIEM
@@ -90,7 +92,8 @@ mostrar la técnica en verde. Estado esperado: de 5 a 6 técnicas validadas sobr
 proyecto. La cifra mide el avance del backlog del proyecto, no la protección absoluta, y
 T1046 y T1110 quedan fuera del conteo (ver E5).
 
-![alt text](../image-3.png)
+<img width="1600" height="814" alt="image" src="https://github.com/user-attachments/assets/5804e35e-899d-4f34-a05e-0f1cda3f6516" />
+
 
 ## 4. Guion de demostración 
 
