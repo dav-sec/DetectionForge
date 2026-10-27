@@ -1,6 +1,6 @@
 # Cobertura ATT&CK — DetectionForge
 
-**5 de 18 técnicas cubiertas ya validadas empíricamente** (28% de lo cubierto por el proyecto).
+**6 de 18 técnicas cubiertas ya validadas empíricamente** (33% de lo cubierto por el proyecto).
 
 > Este porcentaje mide el avance sobre las técnicas que el proyecto decidió cubrir (las que tienen regla Sigma), no sobre la matriz completa de MITRE ATT&CK.
 
@@ -8,7 +8,7 @@ Generado automáticamente por `scripts/generate_coverage.py` — no editar a man
 
 | Técnica | Regla(s) | Estado | SIEMs | Ubicación |
 |---|---|---|---|---|
-| T1003.001 | `t1003.001_lsass_memory_access.yml` | ⏳ pending | elastic, splunk | staging |
+| T1003.001 | `t1003.001_lsass_memory_access.yml` | ✅ passed | elastic, splunk | production |
 | T1003.002 | `t1003.002_sam_hive_dump_reg_save.yml` | ⏳ pending | elastic, splunk | staging |
 | T1012 | `t1012_registry_query_recon.yml` | ✅ passed | elastic, splunk | production |
 | T1018 | `t1018_remote_system_discovery_net_view.yml` | ✅ passed | elastic, splunk | production |

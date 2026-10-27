@@ -10,8 +10,8 @@
   "techniques": [
     {
       "techniqueID": "T1003.001",
-      "color": "#ffe766",
-      "comment": "Reglas: t1003.001_lsass_memory_access.yml | Validadas: 0/1",
+      "color": "#8ec843",
+      "comment": "Reglas: t1003.001_lsass_memory_access.yml | Validadas: 1/1",
       "enabled": true,
       "showSubtechniques": true
     },
