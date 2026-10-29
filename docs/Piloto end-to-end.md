@@ -62,7 +62,10 @@ El archivo sigue el formato de las evidencias existentes (p. ej. `evidencia-t101
 cabecera con la regla y el `atomic_test_id`, SPL y Lucene generados, resultado de cada SIEM
 y un `RESUMEN` con `Splunk: PASS` y `Elastic: PASS`. Se usa `--lookback 15` para que el
 `PASS` corresponda al atomic test recién ejecutado y no a eventos de pruebas anteriores.
-Si algún SIEM da `FAIL`, no se promueve. **[COMPLETAR: salida del runner]**
+Si algún SIEM da `FAIL`, no se promueve.
+
+<img width="1474" height="523" alt="image" src="https://github.com/user-attachments/assets/d8f2b69a-632e-415c-9804-624165fb3095" />
+
 
 **3.5 Promoción y cobertura (E1 + E3 + E5) — PR A.** En la rama `promote/<ttp>`:
 ```bash
