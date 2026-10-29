@@ -61,9 +61,13 @@ DetectionForge/
 │   └── pull_request_template.md
 ├── docs/
 │   ├── taxonomia-estandares.md
-│   ├── framework-validacion.md
-│   ├── entregable-4-cicd.md           ★ este documento
+│   ├── laboratorio-setup.md
+│   ├── Piloto end-to-end.md
+│   ├── Pipeline_CICD.md           ★ este documento
 │   ├── coverage/                      (Entregable 5)
+│   │   └── README.md
+│   │   └── attack-navigator-layer.json
+│   │   └── coverage-report.md
 │   └── evidencia/
 ├── rules/
 │   ├── staging/
