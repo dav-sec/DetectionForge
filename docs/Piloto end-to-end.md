@@ -121,4 +121,3 @@ T1046 y T1110 quedan fuera del conteo (ver E5).
 - El despliegue **publica y verifica** la release, pero no activa las reglas como alertas
   en los SIEM.
 - Prueba la detección, no la **tasa de falsos positivos** con tráfico normal.
-- Sentinel queda para la fase 2, sujeta a acceso a un tenant de Azure.
